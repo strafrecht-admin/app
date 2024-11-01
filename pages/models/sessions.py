@@ -1,32 +1,12 @@
-from django.db import models
-from django.db.models import Q
-from django.shortcuts import render
 from django.contrib.auth.models import User
-
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
-from modelcluster.contrib.taggit import ClusterTaggableManager
-from taggit.models import TaggedItemBase
-
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    FieldRowPanel,
-    InlinePanel,
-    MultiFieldPanel,
-    PageChooserPanel,
-    StreamFieldPanel,
-)
-
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, Collection
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, FieldRowPanel, MultiFieldPanel, InlinePanel, TabbedInterface, ObjectList
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.search import index
-from wagtail.core import blocks
-from wagtail.snippets.models import register_snippet
+from django.db import models
+from django.shortcuts import get_object_or_404
+from wagtail import blocks
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel, TabbedInterface, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from django.shortcuts import get_object_or_404, render
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page
+from wagtail.search import index
 
 from pages.models.sidebar import (
     SidebarSimpleBlock,
@@ -35,6 +15,7 @@ from pages.models.sidebar import (
     SidebarBorderBlock,
     SidebarImageTextBlock,
 )
+
 
 # Blocks
 class SemesterBlock(blocks.StructBlock):
@@ -89,9 +70,9 @@ class SessionsPage(RoutablePageMixin, Page):
         ('content', ContentBlocks(label="Hauptspalte")),
     ], block_counts={
         'content': {'min_num': 1, 'max_num': 1},
-    }, verbose_name="Hauptspalte")
+    }, verbose_name="Hauptspalte", use_json_field=True)
 
-    sidebar = StreamField(SidebarBlocks(required=False), blank=True, verbose_name="Seitenleiste")
+    sidebar = StreamField(SidebarBlocks(required=False), blank=True, verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldPanel('title'),
@@ -232,7 +213,7 @@ class SessionPage(Page):
         index.FilterField('live'),
     ]
 
-    sidebar = StreamField(SidebarBlocks(required=False), blank=True, verbose_name="Seitenleiste")
+    sidebar = StreamField(SidebarBlocks(required=False), blank=True, verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldRowPanel([

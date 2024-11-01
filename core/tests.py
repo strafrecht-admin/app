@@ -1,12 +1,11 @@
+from birdsong.models import Contact
+from django.conf import settings
+from django.contrib.messages import get_messages
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.crypto import salted_hmac
-from django.contrib.messages import get_messages
-from django.conf import settings
-from birdsong.models import Contact
 
-from core.views import newsletter_confirm, newsletter_subscribe
 
 class SubscriptionTest(TestCase):
     def test_subscribe(self):

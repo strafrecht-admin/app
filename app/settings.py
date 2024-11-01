@@ -56,21 +56,16 @@ SHELL_PLUS = "ipython"
 
 INSTALLED_APPS = [
     # Live Reload
-    #'livereload',
-
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    # Admin Interface
-    #'admin_interface',
     'colorfield',
     'django.contrib.admin',
     'pagedown',
     'django_filters',
-    #'debug_toolbar',
 
     # Assets
     'pipeline',
@@ -83,10 +78,8 @@ INSTALLED_APPS = [
     'casetraining',
     'tandem_exams',
     'pages',
-    #'news',
     'emails',
     'profiles',
-    #'leaflet',
     'feedback',
     'dashboard',
     'flashcards',
@@ -96,8 +89,7 @@ INSTALLED_APPS = [
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
     'wagtail.contrib.table_block',
-    # not available in wagtail 2.13
-    # 'wagtail.contrib.typed_table_block',
+    'wagtail',
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
@@ -106,13 +98,12 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
     'wagtailmodelchooser',
     'wagtailcolumnblocks',
     'wagtail_color_panel',
-    'wagtailfontawesome',
+    # 'wagtailfontawesome',  Does not work with wagtail 5+
     'wagtailautocomplete',
-    'wagtailmarkdown',
+    # 'wagtailmarkdown',     Dropped not used
 
     'modelcluster',
     'taggit',
@@ -139,19 +130,16 @@ INSTALLED_APPS = [
     'editors',
     'markdownify',
 
-    # Chatter
-    #'django_chatter',
-
     # User Profile
     'avatar',
 
     # Comments
     'django_comments_xtd',
     'django_comments',
-    'comments_wagtail_xtd',
+    # 'comments_wagtail_xtd',  # Is not compattible with wagtail 5.1+
 
     # Wagtail News
-    'wagtailnews',
+    # 'wagtailnews',  # Outdated, Is not actually used, Is not compattible with wagtail 5.2+
 
     # Wagtail Menus
     'wagtailmenus',
@@ -159,9 +147,6 @@ INSTALLED_APPS = [
     # Wagtail Newsletter
     'mjml',
     'birdsong',
-
-    # Link Checker
-    #'wagtaillinkchecker',
 
     # Wagtail Polls
     'wagtailpolls',
@@ -175,9 +160,6 @@ INSTALLED_APPS = [
 
     # cors-headers
     'corsheaders',
-
-    # django channels
-    # 'channels',
 ] + vars.vars.get("DEV_APPS", [])
 
 MIDDLEWARE = [
@@ -192,9 +174,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'wagtail.core.middleware.SiteMiddleware',
+    #'wagtail.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-    #'livereload.middleware.LiveReloadScript',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'csp.middleware.CSPMiddleware',
 ]
@@ -267,15 +248,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-CHANNEL_LAYERS = {
-  'default': {
-      'BACKEND': 'channels_redis.core.RedisChannelLayer',
-      'CONFIG': {
-        'hosts': [('127.0.0.1', 6379)],
-      },
-  },
-}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -426,27 +398,27 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 CSRF_TRUSTED_ORIGINS = ['https://strafrecht-online.org/']
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'file': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-        }
-    },
-    'handlers': {
-        'file': {
-            'level': vars.vars["LOGGING"]["level"],
-            'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': vars.vars["LOGGING"]["filename"],
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['file'],
-            'level': vars.vars["LOGGING"]["level"],
-            'propagate': True,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'file': {
+#             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+#         }
+#     },
+#     'handlers': {
+#         'file': {
+#             'level': vars.vars["LOGGING"]["level"],
+#             'class': 'logging.FileHandler',
+#             'formatter': 'file',
+#             'filename': vars.vars["LOGGING"]["filename"],
+#         },
+#     },
+#     'loggers': {
+#         '': {
+#             'handlers': ['file'],
+#             'level': vars.vars["LOGGING"]["level"],
+#             'propagate': True,
+#         },
+#     },
+# }

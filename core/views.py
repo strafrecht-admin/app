@@ -1,19 +1,14 @@
-import html2text
-import json
 import logging
-import os
 import urllib.parse
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core import serializers
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
 from wagtail.documents.models import Document
 from wiki.models import Article
 
-from pages.models.exams import Exams
 from core.seed import start
+from pages.models.exams import Exams
 
 logger = logging.getLogger('django')
 
@@ -56,7 +51,7 @@ def exams(request):
     })
 
 def search_wiki(request, query = False):
-    from django.contrib.postgres.search import SearchVector, TrigramSimilarity, TrigramDistance
+    from django.contrib.postgres.search import SearchVector
     #articles = Article.objects.annotate(
     #    #similarity=TrigramSimilarity('current_revision__title', query),
     #    distance=TrigramDistance('current_revision__content', query),
@@ -104,7 +99,7 @@ def api_exams(request):
 
 from django.core.mail import send_mail
 from django.urls import reverse
-from django.utils.crypto import get_random_string, salted_hmac
+from django.utils.crypto import salted_hmac
 from django.conf import settings
 from birdsong.models import Contact
 

@@ -1,18 +1,18 @@
 from __future__ import unicode_literals, absolute_import
 
-from django.conf.urls import include, url
-from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
-
-from wagtail.core import hooks
-from . import urls
+from django.conf.urls import include
+from django.urls import reverse, re_path
+from django.utils.translation import gettext_lazy as _
+from wagtail import hooks
 from wagtail.admin.menu import MenuItem
+
+from . import urls
 
 
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
-        url(r'^polls/', include(urls)),
+        re_path(r'^polls/', include(urls)),
     ]
 
 

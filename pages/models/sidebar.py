@@ -1,9 +1,10 @@
-from wagtail.core import blocks, fields
+from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail_color_panel.blocks import NativeColorBlock
 from wagtailmodelchooser.blocks import ModelChooserBlock
-from wagtailmodelchooser.edit_handlers import ModelChooserPanel
+
 from wagtailpolls.models import Poll
+
 
 class SidebarTitleBlock(blocks.StructBlock):
     content = blocks.RichTextBlock()
@@ -11,17 +12,20 @@ class SidebarTitleBlock(blocks.StructBlock):
     class Meta:
         template = 'blocks/sidebar/title.html'
 
+
 class SidebarSimpleBlock(blocks.StructBlock):
     content = blocks.RichTextBlock()
 
     class Meta:
         template = 'blocks/sidebar/simple.html'
 
+
 class SidebarBorderBlock(blocks.StructBlock):
     content = blocks.RichTextBlock()
 
     class Meta:
         template = 'blocks/sidebar/border.html'
+
 
 class SidebarImageTextBlock(blocks.StructBlock):
     content = blocks.RichTextBlock()
@@ -30,12 +34,14 @@ class SidebarImageTextBlock(blocks.StructBlock):
     class Meta:
         template = 'blocks/sidebar/image_text.html'
 
+
 class SidebarCalendarTextBlock(blocks.StructBlock):
     content = blocks.RichTextBlock()
     calendar = blocks.DateBlock(format="%Y-%m-%d")
 
     class Meta:
         template = 'blocks/sidebar/calendar_text.html'
+
 
 class SidebarHeaderBlock(blocks.StructBlock):
     title = blocks.CharBlock()
@@ -45,6 +51,7 @@ class SidebarHeaderBlock(blocks.StructBlock):
 
     class Meta:
         template = 'blocks/sidebar/header.html'
+
 
 class SidebarPollChooser(blocks.StructBlock):
     poll = ModelChooserBlock('wagtailpolls.Poll')
@@ -58,13 +65,16 @@ class SidebarPollChooser(blocks.StructBlock):
         ctx['page'] = {'poll': Poll.objects.get(id=id)}
         return ctx
 
+
 class SidebarSubscribeBlock(blocks.StructBlock):
     class Meta:
         template = 'blocks/sidebar/subscribe.html'
 
+
 class SidebarEventBlock(blocks.StructBlock):
     class Meta:
         template = 'blocks/sidebar/event.html'
+
 
 class SidebarSearchBlock(blocks.StructBlock):
     class Meta:

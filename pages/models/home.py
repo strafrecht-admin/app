@@ -1,10 +1,10 @@
 from django.db import models
 
 # Wagtail
-from wagtail.core import blocks, fields
-from wagtail.core.models import Page
-from wagtail.core.fields import StreamField
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, FieldRowPanel, MultiFieldPanel
+from wagtail import blocks, fields
+from wagtail.models import Page
+from wagtail.fields import StreamField
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 
 # 3rd Party
 from wagtailcolumnblocks.blocks import ColumnsBlock
@@ -23,14 +23,10 @@ from pages.models.sidebar import (
     SidebarSearchBlock
 )
 from wagtail.contrib.table_block.blocks import TableBlock
-
-from wagtail.images.models import Image
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.panels import FieldPanel
 
 
-
-    # Content Blocks
+# Content Blocks
 class HomeNewsBlock(blocks.StructBlock):
     class Meta:
         template = 'blocks/widgets/news_block.html'
@@ -127,18 +123,18 @@ class BasePage(Page):
         ('content', ContentBlocks(label="Hauptspalte")),
     ], block_counts={
         'content': {'min_num': 1, 'max_num': 1},
-    }, verbose_name="Hauptspalte")
+    }, verbose_name="Hauptspalte", use_json_field=True)
 
     sidebar = StreamField([
         ('sidebar', SidebarBlocks(required=False, label="Seitenleiste")),
     ], block_counts={
         'sidebar': {'min_num': 0, 'max_num': 1},
-    }, verbose_name="Seitenleiste")
+    }, verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldPanel('title'),
         FieldPanel('allow_comments'),
-        ImageChooserPanel('header'),
+        FieldPanel('header'),
         FieldRowPanel([
             FieldPanel('content', classname='col8'),
             FieldPanel('sidebar', classname='col4'),

@@ -1,34 +1,16 @@
 from django.db import models
-from django.db.models import Q
-from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.utils.safestring import mark_safe
-
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
-from modelcluster.contrib.taggit import ClusterTaggableManager
-from taggit.models import TaggedItemBase
-
-from wagtail.admin.edit_handlers import (
+from wagtail import blocks
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
-    InlinePanel,
-    MultiFieldPanel,
-    PageChooserPanel,
-    StreamFieldPanel,
+    MultiFieldPanel
 )
-
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, Collection
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
-from wagtail.documents.models import Document
-from wagtail.documents.edit_handlers import DocumentChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.search import index
-from wagtail.snippets.models import register_snippet
-from wagtail.core import blocks
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from django.shortcuts import get_object_or_404, render
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page
+from wagtail.search import index
 
 from pages.models.sidebar import (
     SidebarSimpleBlock,
@@ -37,6 +19,7 @@ from pages.models.sidebar import (
     SidebarBorderBlock,
     SidebarImageTextBlock,
 )
+
 
 class EventsBlock(blocks.StructBlock):
     class Meta:
@@ -72,9 +55,9 @@ class EventsPage(RoutablePageMixin, Page):
         ('content', ContentBlocks(label="Hauptspalte")),
     ], block_counts={
         'content': {'min_num': 1, 'max_num': 1},
-    }, verbose_name="Hauptspalte")
+    }, verbose_name="Hauptspalte", use_json_field=True)
 
-    sidebar = StreamField(SidebarBlocks(required=False, label="Seitenleiste"), blank=True, verbose_name="Seitenleiste")
+    sidebar = StreamField(SidebarBlocks(required=False, label="Seitenleiste"), blank=True, verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldPanel('title'),
@@ -204,15 +187,15 @@ class EventPage(Page):
             FieldPanel('description', classname="col-12"),
         ], "Info"),
         MultiFieldPanel([
-            ImageChooserPanel('poster_image', classname="col-12"),
-            DocumentChooserPanel('poster_pdf', classname="col-12"),
+            FieldPanel('poster_image', classname="col-12"),
+            FieldPanel('poster_pdf', classname="col-12"),
         ], "Poster"),
         MultiFieldPanel([
             FieldPanel('speaker_description', classname="col-12"),
         ], "Speaker"),
         MultiFieldPanel([
             FieldPanel('youtube_link', classname="col-12"),
-            DocumentChooserPanel('newsletter', classname="col-12"),
+            FieldPanel('newsletter', classname="col-12"),
         ], "Links"),
         MultiFieldPanel([
             FieldPanel('location', classname="col-12"),

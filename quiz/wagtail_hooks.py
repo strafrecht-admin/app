@@ -1,8 +1,8 @@
-from django.conf.urls import url
 from wagtail.contrib.modeladmin.helpers import AdminURLHelper, ButtonHelper
 from wagtail.contrib.modeladmin.options import ModelAdminGroup, modeladmin_register
 from treemodeladmin.options import TreeModelAdmin
 from django.shortcuts import redirect
+from django.urls import re_path
 
 from .models import Question, QuestionVersion
 
@@ -45,7 +45,7 @@ class QuestionVersionAdmin(TreeModelAdmin):
         def gen_url(pattern, view, name=None):
             if not name:
                 name = pattern
-            return url(
+            return re_path(
                 self.url_helper.get_action_url_pattern(pattern),
                 view,
                 name=self.url_helper.get_action_url_name(name)

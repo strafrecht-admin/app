@@ -1,32 +1,22 @@
+from itertools import groupby
+
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.shortcuts import render
-from django.contrib.auth.models import User
-
-from itertools import groupby
-
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
-
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
-    InlinePanel,
     MultiFieldPanel,
-    PageChooserPanel,
-    StreamFieldPanel,
 )
-
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, Collection
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from wagtail.fields import RichTextField
+from wagtail.models import Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
-from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
-import pages
 from pages.models.news import ArticlePage
+
 
 class PeopleIndexPage(RoutablePageMixin, Page):
     class Meta:
@@ -165,7 +155,7 @@ class People(models.Model):
                 FieldPanel('description', classname="col-12"),
             ]),
         ], "Weitere Informationen"),
-        ImageChooserPanel('image')
+        FieldPanel('image')
     ]
 
     search_fields = [

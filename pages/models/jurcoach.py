@@ -1,13 +1,11 @@
 from django.db import models
 
-from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField
-from wagtail.images.models import Image
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
-from wagtailmodelchooser.edit_handlers import ModelChooserPanel
+from wagtail.models import Page, Orderable
+from wagtail.fields import RichTextField
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
 from modelcluster.fields import ParentalKey
 from wagtailpolls.models import Poll
+
 
 class JurcoachFooter(Orderable):
     page = ParentalKey('pages.JurcoachPage', related_name='jurcoachfooter')
@@ -84,7 +82,7 @@ class JurcoachPage(Page):
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
-            [ImageChooserPanel('header'),
+            [FieldPanel('header'),
             FieldPanel('header_headline', classname="col-12"),
             FieldPanel('header_slogan', classname="col-12")],
             heading='Header',
@@ -106,7 +104,7 @@ class JurcoachPage(Page):
         ),
         MultiFieldPanel(
             [InlinePanel('jurcoachfooter', max_num=3, min_num=0, label='Footer Column'),
-             ModelChooserPanel('poll')],
+             FieldPanel('poll')],
             heading='Footer',
         ),
     ]

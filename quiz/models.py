@@ -2,10 +2,8 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from django.contrib.auth.models import User
 from modelcluster.models import ClusterableModel
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wiki.models import URLPath
-
-from core.edit_handlers import ReadOnlyPanel
 
 import json
 
@@ -23,7 +21,7 @@ class Question(ClusterableModel):
         FieldPanel('order'),
         FieldPanel('category'),
         FieldPanel('approved'),
-        ReadOnlyPanel('current', heading="Current question version"),
+        FieldPanel('current', heading="Current question version", read_only=True),
         FieldPanel('user'),
         InlinePanel('questions',heading='Question versions'),
     ]
@@ -58,11 +56,11 @@ class QuestionVersion(ClusterableModel):
         return False
 
     panels = [
-        ReadOnlyPanel('id', heading="Id"),
-        ReadOnlyPanel('is_current', heading="Current version"),
-        ReadOnlyPanel('user', heading="User"),
-        ReadOnlyPanel('created', heading="Created"),
-        ReadOnlyPanel('question', heading="Question"),
+        FieldPanel('id', heading="Id", read_only=True),
+        FieldPanel('is_current', heading="Current version", read_only=True),
+        FieldPanel('user', heading="User", read_only=True),
+        FieldPanel('created', heading="Created", read_only=True),
+        FieldPanel('question', heading="Question", read_only=True),
         FieldPanel('title'),
         FieldPanel('description'),
         InlinePanel('answers',heading='Answers'),

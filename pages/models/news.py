@@ -1,25 +1,17 @@
-from django.db import models
-from django.contrib.auth.models import User
-from itertools import groupby
 import datetime
+from itertools import groupby
 
-from modelcluster.fields import ParentalKey
+from django.db import models
+from django.shortcuts import get_object_or_404
 from modelcluster.contrib.taggit import ClusterTaggableManager
+from modelcluster.fields import ParentalKey
 from taggit.models import TaggedItemBase
-
-from wagtail.core import blocks
-from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, FieldRowPanel, MultiFieldPanel, InlinePanel, TabbedInterface, ObjectList
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.documents.models import Document
-from wagtail.search import index
-from wagtail.snippets.models import register_snippet
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail import blocks
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel, TabbedInterface, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-
-from wagtailcolumnblocks.blocks import ColumnsBlock
-from wagtailautocomplete.edit_handlers import AutocompletePanel
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page
+from wagtail.search import index
 
 from pages.models.sidebar import (
     SidebarTitleBlock,
@@ -29,7 +21,7 @@ from pages.models.sidebar import (
     SidebarPollChooser,
     SidebarSearchBlock,
 )
-from django.shortcuts import get_object_or_404, render
+
 
 # Content Blocks
 class ArticleListBlock(blocks.StructBlock):
@@ -49,6 +41,8 @@ class ArticleListBlock(blocks.StructBlock):
 
         context['groups'] = years
         return context
+
+
 class EvaluationListBlock(blocks.StructBlock):
     class Meta:
         template = 'blocks/widgets/news_list.html'
@@ -66,6 +60,8 @@ class EvaluationListBlock(blocks.StructBlock):
 
         context['groups'] = years
         return context
+
+
 # Content Blocks
 class ArticlesContentBlocks(blocks.StreamBlock):
     richtext = blocks.RichTextBlock(label="Formatierter Text")
@@ -75,11 +71,17 @@ class ArticlesContentBlocks(blocks.StreamBlock):
     def get_context(self, value, parent_context=None):
         context = super().get_context(value, parent_context=parent_context)
         return context
+
+
 class EvaluationsContentBlocks(blocks.StreamBlock):
     richtext = blocks.RichTextBlock(label="Formatierter Text")
     evaluation_list_block = EvaluationListBlock(label="Auflistung aller Abstimmungsauswertungen")
+
+
 class NewslettersContentBlocks(blocks.StreamBlock):
     richtext = blocks.RichTextBlock(label="Formatierter Text")
+
+
 # Sidebar Blocks
 class ArticleSidebarBlocks(blocks.StreamBlock):
     sidebar_title = SidebarTitleBlock(label="Grau unterlegte Überschrift")
@@ -87,11 +89,14 @@ class ArticleSidebarBlocks(blocks.StreamBlock):
     sidebar_image_text = SidebarImageTextBlock(label="Bild links, Text rechts")
     sidebar_poll = SidebarPollChooser(label="Abstimmung")
     sidebar_search = SidebarSearchBlock(label="Suchfeld")
+
+
 class NewsletterSidebarBlocks(blocks.StreamBlock):
     sidebar_title = SidebarTitleBlock(label="Grau unterlegte Überschrift")
     sidebar_simple = SidebarSimpleBlock(label="Schlichter Text")
     sidebar_border = SidebarBorderBlock(label="Grau umrandeter Kasten")
     sidebar_poll = SidebarPollChooser(label="Abstimmung")
+
 
 # Other
 class PageTag(TaggedItemBase):
@@ -99,19 +104,20 @@ class PageTag(TaggedItemBase):
         Page, related_name='tagged_items', on_delete=models.CASCADE
     )
 
+
 # Index Pages
 class ArticlesPage(RoutablePageMixin, Page):
     class Meta:
-        verbose_name="News-Index-Seite"
-        verbose_name_plural="News-Index-Seiten"
+        verbose_name = "News-Index-Seite"
+        verbose_name_plural = "News-Index-Seiten"
 
     content = StreamField([
         ('content', ArticlesContentBlocks(label="Hauptspalte")),
     ], block_counts={
         'content': {'min_num': 1, 'max_num': 1},
-    }, verbose_name="Hauptspalte")
+    }, verbose_name="Hauptspalte", use_json_field=True)
 
-    sidebar = StreamField(ArticleSidebarBlocks(required=False), verbose_name="Seitenleiste")
+    sidebar = StreamField(ArticleSidebarBlocks(required=False), verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldPanel('title'),
@@ -135,11 +141,12 @@ class ArticlesPage(RoutablePageMixin, Page):
 # Pages
 class ArticlePage(Page):
     class Meta:
-        verbose_name="News-Artikel"
-        verbose_name_plural="News-Artikel"
+        verbose_name = "News-Artikel"
+        verbose_name_plural = "News-Artikel"
 
     allow_comments = models.BooleanField(default=False, verbose_name="Kommentare erlaubt")
-    author = models.ForeignKey("People", on_delete=models.SET_NULL, related_name='+', null=True, blank=True, verbose_name="Autor*in")
+    author = models.ForeignKey("People", on_delete=models.SET_NULL, related_name='+', null=True, blank=True,
+                               verbose_name="Autor*in")
     date = models.DateField('Datum')
     body = RichTextField(blank=True, verbose_name="Inhalt")
     tags = ClusterTaggableManager(through=PageTag, blank=True)
@@ -151,12 +158,13 @@ class ArticlePage(Page):
     ]
     autocomplete_search_field = 'name'
 
-    #sidebar = StreamField([
+    # sidebar = StreamField([
     #    ('sidebar', ArticleSidebarBlocks(required=False)),
-    #], block_counts={
+    # ], block_counts={
     #    'sidebar': {'min_num': 0, 'max_num': 1},
-    #})
-    sidebar = StreamField(ArticleSidebarBlocks(required=False), blank=True, verbose_name="Seitenleiste")
+    # })
+    sidebar = StreamField(ArticleSidebarBlocks(required=False), blank=True, verbose_name="Seitenleiste",
+                          use_json_field=True)
 
     content_panels = [
         FieldPanel('allow_comments'),
@@ -202,7 +210,7 @@ class ArticlePage(Page):
     def author_name(self):
         return "{} {}".format(self.author.first_name, self.author.last_name)
 
-    #def set_url_path(self, parent):
+    # def set_url_path(self, parent):
     #    # initially set the attribute self.url_path using the normal operation
     #    super().set_url_path(parent=parent)
     #    self.url_path = self.url_path.replace(
@@ -222,10 +230,11 @@ class ArticlePage(Page):
 
     template = 'pages/news_article_page.html'
 
+
 class EvaluationsPage(Page):
     class Meta:
-        verbose_name="Abstimmungen-Index-Seite"
-        verbose_name_plural="Abstimmungen-Index-Seiten"
+        verbose_name = "Abstimmungen-Index-Seite"
+        verbose_name_plural = "Abstimmungen-Index-Seiten"
 
     def get_context(self, request):
         context = super().get_context(request)
@@ -236,13 +245,13 @@ class EvaluationsPage(Page):
         ('content', EvaluationsContentBlocks(label="Hauptspalte")),
     ], block_counts={
         'content': {'min_num': 1, 'max_num': 1},
-    }, verbose_name="Hauptspalte")
+    }, verbose_name="Hauptspalte", use_json_field=True)
 
     sidebar = StreamField([
         ('sidebar', ArticleSidebarBlocks(required=False, label="Seitenleiste")),
     ], block_counts={
         'sidebar': {'min_num': 0, 'max_num': 1},
-    }, verbose_name="Seitenleiste")
+    }, verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldPanel('title'),
@@ -252,22 +261,23 @@ class EvaluationsPage(Page):
         ], classname='full')
     ]
 
+
 class NewslettersPage(Page):
     class Meta:
-        verbose_name="Newsletter-Seite"
-        verbose_name_plural="Newsletter-Seiten"
+        verbose_name = "Newsletter-Seite"
+        verbose_name_plural = "Newsletter-Seiten"
 
     content = StreamField([
         ('content', NewslettersContentBlocks(label="Hauptspalte")),
     ], block_counts={
         'content': {'min_num': 1, 'max_num': 1},
-    }, verbose_name="Hauptspalte")
+    }, verbose_name="Hauptspalte", use_json_field=True)
 
     sidebar = StreamField([
         ('sidebar', NewsletterSidebarBlocks(required=False, label="Seitenleiste")),
     ], block_counts={
         'sidebar': {'min_num': 0, 'max_num': 1},
-    }, verbose_name="Seitenleiste")
+    }, verbose_name="Seitenleiste", use_json_field=True)
 
     content_panels = [
         FieldPanel('title'),

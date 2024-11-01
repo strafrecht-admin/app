@@ -1,6 +1,7 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
-from treemodeladmin.options import TreeModelAdmin
+
 from .models import *
+
 
 @modeladmin_register
 class CasetrainingAdmin(ModelAdmin):

@@ -1,69 +1,46 @@
-import html2text
 import json
 import logging
 import os
+import uuid
+from collections import deque
+from datetime import datetime
 from io import BytesIO
+
 import requests
 import wget
-import uuid
-import itertools
-
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.authtoken.models import Token
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.response import Response
-from markdownify import markdownify as md
 from bs4 import BeautifulSoup
-from collections import deque
-from time import sleep
-from itertools import chain
-from datetime import datetime
-
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.core import serializers
-from wagtail.core.models import Page
-
+from django.http import HttpResponse
+from django.shortcuts import render
+from markdownify import markdownify as md
 from wiki.models import Article, ArticleRevision, URLPath
 from wiki.plugins.notifications.models import ArticleSubscription
 
 from core.models import Submission
-from quiz.models import Question, QuestionVersion, AnswerVersion, Quiz, UserAnswer, Choice
+from pages.models.events import EventsPage, EventPage
 from pages.models.exams import Exams
 from pages.models.news import ArticlesPage, ArticlePage
 from pages.models.sessions import SessionsPage, SessionPage
-from pages.models.events import EventsPage, EventPage
-
-from rest_framework import viewsets, permissions, mixins, generics, response
-from .scrape.news import get_json as get_news_json
+from quiz.models import Question, QuestionVersion, AnswerVersion, Quiz
 from .scrape.abstimmungen import get_json as get_abstimmungen_json
-from .scrape.lehre import get_json as get_lehre_json
 from .scrape.events import get_json as get_events_json
+from .scrape.lehre import get_json as get_lehre_json
+from .scrape.news import get_json as get_news_json
 
 logger = logging.getLogger('django')
-from wagtail.core.blocks import StreamValue
-from wagtail.core.rich_text import RichText
+from wagtail.rich_text import RichText
 from wagtail.contrib.redirects.models import Redirect
-from wagtail.images.models import Image
 from wagtail.documents.models import Document
-from wagtail.core.models import Collection, CollectionManager
+from wagtail.models import Collection
 
 # image upload
-import willow
 from django.core.files.images import ImageFile
 from wagtail.images.models import Image
 from willow.plugins.pillow import PillowImage
 import PIL
 
 # redirects
-import re
 
 def start(request):
     if not request.user.is_superuser:

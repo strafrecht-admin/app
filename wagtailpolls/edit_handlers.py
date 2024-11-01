@@ -1,12 +1,12 @@
 from django.template.loader import render_to_string
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
-from wagtail.admin.edit_handlers import BaseChooserPanel
+from wagtail.admin.panels.field_panel import FieldPanel
 
 from .widgets import AdminPollChooser
 
 
-class BasePollChooserPanel(BaseChooserPanel):
+class BasePollChooserPanel(FieldPanel):
     object_type_name = 'item'
 
     _target_model = None
@@ -32,7 +32,7 @@ class BasePollChooserPanel(BaseChooserPanel):
 
     @classmethod
     def get_snippet_type_name(cls):
-        return force_text(cls.target_model()._meta.verbose_name)
+        return force_str(cls.target_model()._meta.verbose_name)
 
 
 class PollChooserPanel(BasePollChooserPanel):

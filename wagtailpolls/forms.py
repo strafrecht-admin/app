@@ -3,8 +3,8 @@ import datetime
 from django import forms
 from django.conf import settings
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext_lazy as __
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy as __
 from ipware.ip import get_ip, get_real_ip
 
 from .models import Vote

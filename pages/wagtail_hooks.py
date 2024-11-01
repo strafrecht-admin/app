@@ -1,59 +1,66 @@
-from django.utils.html import format_html
-from django.templatetags.static import static
-from wagtail.admin.rich_text.converters.html_to_contentstate import InlineStyleElementHandler, BlockElementHandler, InlineEntityElementHandler
-from wagtail.core import hooks
-from wagtail.contrib.modeladmin.options import (
-    ModelAdmin, ModelAdminGroup, modeladmin_register
-)
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
+from django.templatetags.static import static
+from django.utils.html import format_html
+from wagtail import hooks
+from wagtail.admin.rich_text.converters.html_to_contentstate import InlineStyleElementHandler, BlockElementHandler
+from wagtail.contrib.modeladmin.options import (
+    ModelAdmin, modeladmin_register
+)
 
+from pages.models.events import EventPage
+from pages.models.exams import Exams
 from pages.models.news import ArticlePage
 from pages.models.people import People
-from pages.models.events import EventPage
 from pages.models.sessions import SessionPage
-from pages.models.exams import Exams
+
 
 class PeopleModelAdmin(ModelAdmin):
     model = People
     menu_label = 'Personen'
     menu_icon = 'user'
-    menu_order= 202
+    menu_order = 202
     list_display = ('last_name', 'first_name', 'status', 'role')
+
 
 class EventsModelAdmin(ModelAdmin):
     model = EventPage
     menu_label = 'Events'
     menu_icon = 'site'
-    menu_order= 201
+    menu_order = 201
     list_display = ('title', 'speaker_description_html', 'date')
+
 
 class ArticlesModelAdmin(ModelAdmin):
     model = ArticlePage
     menu_label = 'News-Artikel'
     menu_icon = 'doc-full'
-    menu_order= 201
+    menu_order = 201
     list_display = ('date', 'title', 'author', 'allow_comments', 'is_evaluation')
+
 
 class SessionsModelAdmin(ModelAdmin):
     model = SessionPage
     menu_label = 'Lehrveranstaltungen'
     menu_icon = 'date'
-    menu_order= 200
+    menu_order = 200
     list_display = ('semester', 'name', 'speaker')
+
 
 class ExamsModelAdmin(ModelAdmin):
     model = Exams
     menu_label = 'Klausurdatenbank'
     menu_icon = 'edit'
-    menu_order= 200
+    menu_order = 200
     list_display = ('date', 'type', 'difficulty', 'problems_html')
 
-#modeladmin_register(NodeAdmin)
+
+# modeladmin_register(NodeAdmin)
 modeladmin_register(PeopleModelAdmin)
 modeladmin_register(EventsModelAdmin)
 modeladmin_register(ArticlesModelAdmin)
 modeladmin_register(SessionsModelAdmin)
 modeladmin_register(ExamsModelAdmin)
+
 
 # pages/news/polls/poll-eval/sessions/events/people/newsletter email/
 
@@ -64,12 +71,14 @@ def global_admin_css():
         static("css/columns.css")
     )
 
+
 @hooks.register("insert_global_admin_css", order=100)
 def global_admin_css():
     return format_html(
         '<link rel="stylesheet" href="{}">',
         static("css/wagtail/sessions.css")
     )
+
 
 # @hooks.register('construct_main_menu')
 # def hide_snippets_menu_item(request, menu_items):
@@ -99,6 +108,7 @@ def register_roofline_feature(features):
 
     features.default_features.append('roofline')
 
+
 @hooks.register('register_rich_text_features')
 def register_revised_label_feature(features):
     feature_name = 'revised_label'
@@ -122,6 +132,7 @@ def register_revised_label_feature(features):
 
     features.default_features.append('revised_label')
 
+
 @hooks.register('register_rich_text_features')
 def register_new_label_feature(features):
     feature_name = 'new_label'
@@ -144,6 +155,7 @@ def register_new_label_feature(features):
     })
 
     features.default_features.append('new_label')
+
 
 @hooks.register('register_rich_text_features')
 def register_underline_feature(features):
